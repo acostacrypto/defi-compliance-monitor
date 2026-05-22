@@ -1,0 +1,16 @@
+node_modules/
+artifacts/
+cache/
+coverage/
+dist/
+broadcast/
+out/
+.env
+.DS_Store
+.claude/
+.opencode/
+opencode.json
+opencode.jsonc
+TODO.txt
+deployments/somnia-testnet.json
+.dev-*.sh
