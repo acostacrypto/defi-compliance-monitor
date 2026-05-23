@@ -1,0 +1,141 @@
+:root {
+  --bg: #0b1320;
+  --panel: #121f33;
+  --panel-soft: #1b2c46;
+  --ink: #e8f1ff;
+  --muted: #9fb6d4;
+  --accent: #10b981;
+  --accent-2: #f59e0b;
+  --danger: #ef4444;
+  --info: #38bdf8;
+  --line: #2a466a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 700px at 90% -10%, #1f496b 0%, transparent 45%),
+    radial-gradient(900px 600px at -10% 20%, #1f6d5c 0%, transparent 40%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+.wrap {
+  width: min(1180px, 94vw);
+  margin: 28px auto 56px;
+  display: grid;
+  gap: 16px;
+}
+
+.hero, .card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+}
+
+.hero { padding: 22px; }
+.hero h1 { margin: 0 0 8px; font-size: clamp(1.4rem, 2vw, 2rem); }
+.hero p { margin: 0; color: var(--muted); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+@media (min-width: 1100px) {
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .card-wide { grid-column: span 2; }
+  .card-full { grid-column: span 4; }
+}
+
+.card { padding: 16px; }
+.card h2 { margin: 0 0 12px; font-size: 1rem; letter-spacing: 0.02em; }
+
+label { display: block; margin: 8px 0 6px; color: var(--muted); font-size: 0.9rem; }
+input, select, button {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel-soft);
+  color: var(--ink);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.row { display: grid; gap: 10px; }
+.row.two { grid-template-columns: 1fr 1fr; }
+
+button {
+  cursor: pointer;
+  background: linear-gradient(120deg, var(--accent), #0ea5e9);
+  color: #03130c;
+  font-weight: 700;
+  border: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+button:hover { transform: translateY(-1px); filter: brightness(1.07); }
+button.secondary { background: linear-gradient(120deg, var(--accent-2), #f97316); color: #1a1003; }
+button.danger { background: linear-gradient(120deg, var(--danger), #f97316); color: #fff; }
+button.ghost { background: var(--panel-soft); color: var(--ink); border: 1px solid var(--line); }
+
+.pill {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin: 0 6px 6px 0;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border: 1px solid var(--line);
+}
+.status-badge .dot { width: 12px; height: 12px; border-radius: 50%; }
+.status-monitoring { background: rgba(16,185,129,0.12); color: var(--accent); }
+.status-monitoring .dot { background: var(--accent); }
+.status-paused { background: rgba(239,68,68,0.14); color: var(--danger); }
+.status-paused .dot { background: var(--danger); }
+.status-review { background: rgba(245,158,11,0.14); color: var(--accent-2); }
+.status-review .dot { background: var(--accent-2); }
+
+pre {
+  margin: 0;
+  max-height: 260px;
+  overflow: auto;
+  background: #07101c;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  color: #b8d7ff;
+  white-space: pre-wrap;
+  font-size: 0.86rem;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+td.mono, .mono { font-family: "JetBrains Mono", Consolas, monospace; word-break: break-all; }
+a { color: var(--info); }
+
+.badge { padding: 3px 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; }
+.b-clear { background: rgba(16,185,129,0.16); color: var(--accent); }
+.b-violation { background: rgba(239,68,68,0.16); color: var(--danger); }
+.b-ambiguous { background: rgba(245,158,11,0.16); color: var(--accent-2); }
+.b-pending { background: rgba(56,189,248,0.16); color: var(--info); }
+
+.status { color: var(--muted); font-size: 0.88rem; }
+.guardian { border-color: rgba(245,158,11,0.5); }
