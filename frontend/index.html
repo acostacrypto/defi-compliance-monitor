@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Somnia DeFi Compliance Monitor</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>DeFi Compliance Monitor</h1>
+      <p>Autonomous sanctions &amp; compliance monitoring powered by Somnia Agentic L1.</p>
+      <div style="margin-top:12px">
+        <span class="pill">Chain ID: 50312</span>
+        <span class="pill">Network: Somnia Testnet</span>
+        <span class="pill">Verdicts: VIOLATION / CLEAR / AMBIGUOUS</span>
+        <span class="pill">Consensus: 3 validators, threshold 2</span>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>1) Wallet + Contract</h2>
+        <div class="row">
+          <button id="connectBtn">Connect Wallet</button>
+          <div class="status">Account: <span id="account" class="mono">not connected</span></div>
+          <label>ComplianceMonitor Address</label>
+          <input id="contractAddress" placeholder="0x..." />
+          <button id="saveAddressBtn" class="secondary">Save Address</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>2) Protocol Status</h2>
+        <div class="row">
+          <div id="statusBadge" class="status-badge status-monitoring"><span class="dot"></span><span id="statusText">Unknown</span></div>
+          <div class="status">Accrued fees: <span id="fees" class="mono">-</span> STT</div>
+          <div class="status">Inference agent: <span id="agentId" class="mono">-</span></div>
+          <button id="refreshBtn" class="ghost">Refresh</button>
+          <button id="autoRefreshBtn" class="ghost">Auto-refresh: OFF</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>3) Run Sanction Check</h2>
+        <div class="row">
+          <label>Sanction List</label>
+          <select id="listType">
+            <option value="OFAC_SDN">OFAC_SDN</option>
+            <option value="EU_CONSOLIDATED">EU_CONSOLIDATED</option>
+            <option value="UN_CONSOLIDATED">UN_CONSOLIDATED</option>
+          </select>
+          <label>Top-up over deposit (STT)</label>
+          <input id="topup" type="number" min="0" step="0.1" value="0.5" />
+          <button id="checkBtn">Trigger Sanction Check</button>
+          <div class="status" id="gasInfo">Sends platform deposit + top-up. 0.1% fee is retained for the treasury.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>4) Reactivity</h2>
+        <div class="row">
+          <label>Sanction List</label>
+          <select id="updateListType">
+            <option value="OFAC_SDN">OFAC_SDN</option>
+            <option value="EU_CONSOLIDATED">EU_CONSOLIDATED</option>
+            <option value="UN_CONSOLIDATED">UN_CONSOLIDATED</option>
+          </select>
+          <button id="simUpdateBtn" class="secondary">Simulate Sanction List Update</button>
+          <div class="status">Emits <span class="mono">SanctionListUpdate</span>. A registered Somnia Reactivity handler (or <span class="mono">npm run monitor</span>) reacts and runs a check.</div>
+        </div>
+      </article>
+
+      <article class="card card-wide guardian">
+        <h2>5) Guardian Panel <span class="pill">multisig only</span></h2>
+        <div class="row">
+          <div class="row two">
+            <button id="pauseBtn" class="danger">Emergency Pause</button>
+            <button id="resumeBtn" class="secondary">Resume Protocol</button>
+          </div>
+          <label>Case ID</label>
+          <input id="caseId" placeholder="0x... (leave blank for latest)" />
+          <div class="row two">
+            <button id="confirmBtn" class="danger">Confirm Violation</button>
+            <button id="dismissBtn">Dismiss Case</button>
+          </div>
+          <div class="status">Confirm keeps the protocol Paused; Dismiss clears the case and resumes Monitoring. Reverts unless signed by the guardian multisig.</div>
+        </div>
+      </article>
+
+      <article class="card card-wide">
+        <h2>6) High-risk Action (gated)</h2>
+        <div class="row">
+          <button id="highRiskBtn" class="ghost">Execute High-risk Action</button>
+          <div class="status">Demonstrates auto-pause: this call succeeds only while the protocol is Monitoring, and reverts when Paused or UnderReview.</div>
+        </div>
+      </article>
+
+      <article class="card card-full">
+        <h2>Cases &amp; Violations</h2>
+        <div class="row">
+          <button id="loadCasesBtn" class="ghost">Load Cases</button>
+          <div style="overflow:auto">
+            <table id="casesTable">
+              <thead>
+                <tr><th>#</th><th>Case ID</th><th>List</th><th>Outcome</th><th>Result</th><th>Escalated</th><th>Resolved</th></tr>
+              </thead>
+              <tbody id="casesBody"><tr><td colspan="7" class="status">No cases loaded.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+
+      <article class="card card-full">
+        <h2>Activity Log</h2>
+        <pre id="log"></pre>
+      </article>
+    </section>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
