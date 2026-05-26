@@ -1,31 +1,55 @@
-# DeFi Compliance Monitor - Somnia Agentic L1
+# DeFi Compliance Monitor
 
-Autonomous sanctions/compliance monitor for a DeFi protocol.
+Autonomous compliance monitoring system for DeFi protocols built on Somnia Agentic L1. Monitor sanctions, escalate ambiguous cases to guardians, and maintain full on-chain auditability.
 
-- `VIOLATION` -> protocol auto-pauses
-- `AMBIGUOUS` -> escalates to guardian review
-- `CLEAR` -> protocol remains in monitoring
+## Overview
 
-Everything is auditable on-chain through events and case state.
+This MVP demonstrates an autonomous compliance monitor that uses on-chain agents to:
+- **VIOLATION** → Protocol auto-pauses
+- **AMBIGUOUS** → Escalates to guardian review
+- **CLEAR** → Protocol remains in monitoring
 
-## What this project includes
+Every decision is recorded on-chain through events and immutable case state, ensuring complete auditability.
 
-- Smart contract: `contracts/ComplianceMonitor.sol`
-- Interfaces: `contracts/interfaces/`
-- Scripts: `scripts/` (`deploy`, `check`, `reactivity`, `monitor`, `escalate`, `diagnose`)
-- Frontend dashboard: `frontend/index.html`
-- Tests: `test/` (unit + e2e)
+## Key Features
 
-## 1) Prerequisites
+- **Autonomous Monitoring** - Smart contracts with state machine controls
+- **Guardian Escalation** - Multi-sig controlled case resolution
+- **On-Chain Callbacks** - Real-time inference requests and responses
+- **Full Auditability** - All compliance decisions stored on-chain
+- **Web Dashboard** - Interactive UI for monitoring and guardian actions
+- **Comprehensive Testing** - Unit and E2E test coverage (20+ tests)
 
-- Node.js 20+
-- npm
-- A funded Somnia testnet wallet (STT)
-- Agent IDs from the Somnia Agent Explorer: `https://agents.testnet.somnia.network`
+## What's Included
 
-If using WSL, use Linux Node/npm (not Windows npm over UNC paths).
+```
+contracts/              Smart contracts and interfaces
+  ├── ComplianceMonitor.sol
+  └── interfaces/       Agent request/callback interfaces
 
-## 2) Clone and install
+scripts/               Automation and testing scripts
+  ├── deploy.ts        Contract deployment
+  ├── sanctionCheck.ts Compliance verification
+  ├── monitor.ts       Autonomous monitoring loop
+  ├── escalate.ts      Guardian case resolution
+  └── diagnose.ts      State inspection
+
+frontend/              Web dashboard
+  └── index.html       Connect wallet → manage compliance
+
+test/                  Unit and E2E tests
+```
+
+## Prerequisites
+
+- **Node.js 20+** (Use Linux toolchain if on WSL)
+- **npm**
+- **Funded Somnia testnet wallet** (STT tokens)
+- **Agent IDs** from [Somnia Agent Explorer](https://agents.testnet.somnia.network)
+
+## Getting Started
+
+### 1. Clone and Install
 
 ```bash
 git clone <your-repo-url> defi-compliance-monitor
@@ -33,42 +57,32 @@ cd defi-compliance-monitor
 npm install
 ```
 
-## 3) Configure `.env`
+### 2. Configure Environment
 
 ```bash
 cp .env.demo.example .env
 ```
 
-You can also start from `.env.example`, but `.env.demo.example` is optimized for
-the demo flow with explicit placeholders.
+Fill required values:
 
-Fill these required values:
+| Variable | Description |
+| --- | --- |
+| `SOMNIA_RPC_URL` | Somnia testnet RPC endpoint |
+| `PRIVATE_KEY` | Deployer wallet private key |
+| `AGENT_REQUESTER_ADDRESS` | Somnia agent platform contract |
+| `JSON_API_AGENT_ID` | JSON API agent ID |
+| `LLM_PARSE_WEBSITE_AGENT_ID` | Parse website agent ID |
+| `LLM_INFERENCE_AGENT_ID` | Inference agent ID |
+| `GUARDIAN_MULTISIG` | Guardian address for escalations |
+| `PROTOCOL_TREASURY` | Fee recipient address |
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `SOMNIA_RPC_URL` | Yes | Somnia testnet RPC |
-| `SOMNIA_CHAIN_ID` | Yes | `50312` |
-| `PRIVATE_KEY` | Yes (deploy/transact) | Deployer/operator wallet private key |
-| `AGENT_REQUESTER_ADDRESS` | Yes | Somnia agent platform contract |
-| `JSON_API_AGENT_ID` | Yes | JSON API agent ID |
-| `LLM_PARSE_WEBSITE_AGENT_ID` | Yes | Parse Website agent ID |
-| `LLM_INFERENCE_AGENT_ID` | Yes | Inference agent ID |
-| `GUARDIAN_MULTISIG` | Yes | Guardian address for escalations |
-| `PROTOCOL_TREASURY` | Yes | Fee recipient |
-| `COMPLIANCE_MONITOR_ADDRESS` | After deploy | Deployed contract address |
-
-### Demo configuration (simple and recommended)
-
-For demo/testing, use the **same wallet address** for guardian and treasury:
-
+**Demo Setup (Recommended)** - Use the same address for both guardian and treasury:
 ```env
 GUARDIAN_MULTISIG=<your-wallet-address>
 PROTOCOL_TREASURY=<your-wallet-address>
 ```
 
-Production recommendation: use separate addresses (multisig + treasury).
-
-## 4) Compile and test
+### 3. Compile and Test
 
 ```bash
 npm run compile
@@ -77,87 +91,108 @@ npm run test
 
 Expected: 20 tests passing.
 
-## 5) Deploy contract
+### 4. Deploy Contract
 
 ```bash
 npm run deploy:somnia
 ```
 
-This creates `deployments/somnia-testnet.json` and prints explorer info.
-
 Copy the deployed address to `.env`:
-
 ```env
 COMPLIANCE_MONITOR_ADDRESS=<deployed-address>
 ```
 
-## 6) Run scripts (CLI validation)
+### 5. Run Scripts
+
+Validate the deployment with CLI scripts:
 
 ```bash
-npm run check:sanctions
-npm run reactivity
-npm run diagnose
+npm run check:sanctions   # One full sanction-check flow
+npm run reactivity        # Simulate list update → reactive check
+npm run diagnose          # Inspect case state + decoded payload
 ```
 
-Optional:
-
+Optional guardian actions:
 ```bash
-npm run monitor
-ACTION=confirm CASE_ID=0x... npm run escalate
-ACTION=dismiss CASE_ID=0x... npm run escalate
-ACTION=resume npm run escalate
+npm run monitor                      # Autonomous monitor loop
+ACTION=confirm CASE_ID=0x... npm run escalate  # Confirm case
+ACTION=dismiss CASE_ID=0x... npm run escalate  # Dismiss case
+ACTION=resume npm run escalate                 # Resume monitoring
 ```
 
-## 7) Run and test the frontend
+### 6. Frontend Dashboard
 
-Start a static server:
-
+Start the web server:
 ```bash
 npx serve frontend
 ```
 
-Open the served URL and follow this exact flow:
+Then in your browser:
+1. Click **Connect Wallet** → approve Somnia Testnet (50312)
+2. Paste `COMPLIANCE_MONITOR_ADDRESS`
+3. Click **Save Address**
+4. Click **Refresh** to view status (Monitoring / Paused / UnderReview)
 
-1. Click `Connect Wallet`.
-2. Approve switching/adding Somnia Testnet (`50312`).
-3. Paste `COMPLIANCE_MONITOR_ADDRESS` in `ComplianceMonitor Address`.
-4. Click `Save Address`.
-5. Click `Refresh` and verify status shows `Monitoring`, `Paused`, or `UnderReview`.
+#### Testing the UI
 
-### UI test checklist
+| Scenario | Steps | Expected |
+| --- | --- | --- |
+| **Monitoring** | Click `Execute High-risk Action` | Succeeds only when status is `Monitoring` |
+| **Violation** | Run `LIST_TYPE=FORCED_VIOLATION npm run check:sanctions` | Status shows `Paused`; actions blocked |
+| **Ambiguous** | Run `LIST_TYPE=FORCED_AMBIGUOUS npm run check:sanctions` | Status shows `UnderReview`; case escalated |
+| **Resolution** | In Guardian Panel, confirm or dismiss case | Confirm → stays Paused; Dismiss → returns Monitoring |
 
-1. **Monitoring path**
-   - Click `Execute High-risk Action`.
-   - Expected: success only when status is `Monitoring`.
+## Real vs. Simulated
 
-2. **Violation path**
-   - Run in terminal: `LIST_TYPE=FORCED_VIOLATION npm run check:sanctions`.
-   - In UI, refresh status.
-   - Expected: status `Paused`; high-risk action blocked.
-
-3. **Ambiguous path**
-   - Run in terminal: `LIST_TYPE=FORCED_AMBIGUOUS npm run check:sanctions`.
-   - In UI, refresh/load cases.
-   - Expected: status `UnderReview`; case escalated.
-
-4. **Guardian resolution path**
-   - In UI Guardian Panel (or CLI `npm run escalate`), confirm or dismiss case.
-   - Confirm -> stays/returns `Paused`.
-   - Dismiss -> returns `Monitoring`.
+| Component | Status |
+| --- | --- |
+| Smart contracts | ✅ Real |
+| State machine | ✅ Real |
+| Guardian controls | ✅ Real |
+| On-chain inference | ✅ Real |
+| Tests | ✅ Real |
+| Frontend interactions | ✅ Real |
+| JSON API + Parse Website pipeline | 🔄 Simulated/off-chain |
+| Same-block reactivity (local demo) | 🔄 Simulated |
 
 ## Troubleshooting
 
-- **Wallet on wrong chain**: switch to Somnia Testnet `50312`.
-- **`Missing required env var`**: complete `.env` required fields.
-- **Deploy fails**: verify agent IDs are valid and registered.
-- **High-risk action blocked**: protocol is not `Monitoring`; resolve case or resume first.
-- **npm audit warnings**: typically dev-dependency tooling warnings; project can still compile/test/deploy.
+| Issue | Solution |
+| --- | --- |
+| Wallet on wrong chain | Switch to Somnia Testnet (50312) |
+| Missing env var | Complete all required fields in `.env` |
+| Deploy fails | Verify agent IDs are registered in Agent Explorer |
+| High-risk action blocked | Protocol not in `Monitoring` state; resolve case or resume |
+| npm warnings | Typically dev-dependency tooling; project still compiles/tests/deploys |
 
-## Real vs mock in this MVP
+> [!TIP]
+> For more details, see [QUICKSTART.md](QUICKSTART.md).
 
-- Real: contract, state machine, guardian controls, on-chain inference request/callback, tests, frontend actions.
-- Simulated/off-chain orchestration: JSON API + Parse Website pipeline wiring and same-block reactivity in local demos.
+## npm Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run compile` | Compile contracts |
+| `npm run test` | Run unit + E2E tests |
+| `npm run coverage` | Test coverage report |
+| `npm run deploy:somnia` | Deploy to Somnia testnet |
+| `npm run check:sanctions` | Full sanction-check flow |
+| `npm run reactivity` | Simulate list update → reactive check |
+| `npm run monitor` | Autonomous monitor loop |
+| `npm run escalate` | Guardian case resolution |
+| `npm run diagnose` | Inspect case state + payload |
+
+## Architecture
+
+The system consists of:
+
+- **Smart Contract** - Immutable on-chain state machine with guardian controls
+- **Inference Agents** - Somnia agentic network for JSON API calls and LLM inference
+- **Frontend Dashboard** - Real-time monitoring and guardian actions
+- **CLI Scripts** - Automation, testing, and case inspection
+
+All compliance decisions are recorded on-chain via events and case logs, ensuring full auditability and transparency.
 
 ## License
 
-MIT (see `LICENSE`).
+MIT — see [LICENSE](LICENSE)
