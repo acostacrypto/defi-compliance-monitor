@@ -1,13 +1,13 @@
-﻿# DeFi Compliance Monitor
+# DeFi Compliance Monitor
 
 Autonomous compliance monitoring system for DeFi protocols built on Somnia Agentic L1. Monitor sanctions, escalate ambiguous cases to guardians, and maintain full on-chain auditability.
 
 ## Overview
 
 This MVP demonstrates an autonomous compliance monitor that uses on-chain agents to:
-- **VIOLATION** ÔåÆ Protocol auto-pauses
-- **AMBIGUOUS** ÔåÆ Escalates to guardian review
-- **CLEAR** ÔåÆ Protocol remains in monitoring
+- **VIOLATION** → Protocol auto-pauses
+- **AMBIGUOUS** → Escalates to guardian review
+- **CLEAR** → Protocol remains in monitoring
 
 Every decision is recorded on-chain through events and immutable case state, ensuring complete auditability.
 
@@ -24,18 +24,18 @@ Every decision is recorded on-chain through events and immutable case state, ens
 
 ```
 contracts/              Smart contracts and interfaces
-  Ôö£ÔöÇÔöÇ ComplianceMonitor.sol
-  ÔööÔöÇÔöÇ interfaces/       Agent request/callback interfaces
+  ├── ComplianceMonitor.sol
+  └── interfaces/       Agent request/callback interfaces
 
 scripts/               Automation and testing scripts
-  Ôö£ÔöÇÔöÇ deploy.ts        Contract deployment
-  Ôö£ÔöÇÔöÇ sanctionCheck.ts Compliance verification
-  Ôö£ÔöÇÔöÇ monitor.ts       Autonomous monitoring loop
-  Ôö£ÔöÇÔöÇ escalate.ts      Guardian case resolution
-  ÔööÔöÇÔöÇ diagnose.ts      State inspection
+  ├── deploy.ts        Contract deployment
+  ├── sanctionCheck.ts Compliance verification
+  ├── monitor.ts       Autonomous monitoring loop
+  ├── escalate.ts      Guardian case resolution
+  └── diagnose.ts      State inspection
 
 frontend/              Web dashboard
-  ÔööÔöÇÔöÇ index.html       Connect wallet ÔåÆ manage compliance
+  └── index.html       Connect wallet → manage compliance
 
 test/                  Unit and E2E tests
 ```
@@ -108,7 +108,7 @@ Validate the deployment with CLI scripts:
 
 ```bash
 npm run check:sanctions   # One full sanction-check flow
-npm run reactivity        # Simulate list update ÔåÆ reactive check
+npm run reactivity        # Simulate list update → reactive check
 npm run diagnose          # Inspect case state + decoded payload
 ```
 
@@ -128,7 +128,7 @@ npx serve frontend
 ```
 
 Then in your browser:
-1. Click **Connect Wallet** ÔåÆ approve Somnia Testnet (50312)
+1. Click **Connect Wallet** → approve Somnia Testnet (50312)
 2. Paste `COMPLIANCE_MONITOR_ADDRESS`
 3. Click **Save Address**
 4. Click **Refresh** to view status (Monitoring / Paused / UnderReview)
@@ -140,20 +140,20 @@ Then in your browser:
 | **Monitoring** | Click `Execute High-risk Action` | Succeeds only when status is `Monitoring` |
 | **Violation** | Run `LIST_TYPE=FORCED_VIOLATION npm run check:sanctions` | Status shows `Paused`; actions blocked |
 | **Ambiguous** | Run `LIST_TYPE=FORCED_AMBIGUOUS npm run check:sanctions` | Status shows `UnderReview`; case escalated |
-| **Resolution** | In Guardian Panel, confirm or dismiss case | Confirm ÔåÆ stays Paused; Dismiss ÔåÆ returns Monitoring |
+| **Resolution** | In Guardian Panel, confirm or dismiss case | Confirm → stays Paused; Dismiss → returns Monitoring |
 
 ## Real vs. Simulated
 
 | Component | Status |
 | --- | --- |
-| Smart contracts | Ô£à Real |
-| State machine | Ô£à Real |
-| Guardian controls | Ô£à Real |
-| On-chain inference | Ô£à Real |
-| Tests | Ô£à Real |
-| Frontend interactions | Ô£à Real |
-| JSON API + Parse Website pipeline | ­ƒöä Simulated/off-chain |
-| Same-block reactivity (local demo) | ­ƒöä Simulated |
+| Smart contracts | ✓ Real |
+| State machine | ✓ Real |
+| Guardian controls | ✓ Real |
+| On-chain inference | ✓ Real |
+| Tests | ✓ Real |
+| Frontend interactions | ✓ Real |
+| JSON API + Parse Website pipeline | 🔄 Simulated/off-chain |
+| Same-block reactivity (local demo) | 🔄 Simulated |
 
 ## Troubleshooting
 
@@ -177,7 +177,7 @@ Then in your browser:
 | `npm run coverage` | Test coverage report |
 | `npm run deploy:somnia` | Deploy to Somnia testnet |
 | `npm run check:sanctions` | Full sanction-check flow |
-| `npm run reactivity` | Simulate list update ÔåÆ reactive check |
+| `npm run reactivity` | Simulate list update → reactive check |
 | `npm run monitor` | Autonomous monitor loop |
 | `npm run escalate` | Guardian case resolution |
 | `npm run diagnose` | Inspect case state + payload |
@@ -195,4 +195,4 @@ All compliance decisions are recorded on-chain via events and case logs, ensurin
 
 ## License
 
-MIT ÔÇö see [LICENSE](LICENSE)
+MIT — see [LICENSE](LICENSE)
