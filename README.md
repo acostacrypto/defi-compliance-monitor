@@ -1,6 +1,6 @@
 # DeFi Compliance Monitor
 
-Autonomous compliance monitoring system for DeFi protocols built on Somnia Agentic L1. Monitor sanctions, escalate ambiguous cases to guardians, and maintain full on-chain auditability.
+Autonomous compliance monitoring system for DeFi protocols built on Somnia Testnet. Monitor sanctions, escalate ambiguous cases to guardians, and maintain full on-chain auditability.
 
 ## Overview
 
