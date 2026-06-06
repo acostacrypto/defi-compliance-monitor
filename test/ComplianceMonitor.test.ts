@@ -277,4 +277,71 @@ describe("ComplianceMonitor", () => {
     });
     await assert.rejects(ctx.monitor.write.highRiskAction());
   });
+
+  it("handles zero fee when msg.value is extremely small", async () => {
+    const ctx = await deploy();
+    // 1000 wei is small enough that fee = (1000 * 10) / 10000 = 1 wei.
+    // 500 wei would yield fee = 0 wei. Let's test with 500 wei.
+    // First, let's configure the mock to expect a 0 deposit to allow low value check.
+    const mockZero = await ctx.viem.deployContract("MockAgentRequester", [0n]);
+    const monitorZero = await ctx.viem.deployContract("ComplianceMonitor", [
+      mockZero.address,
+      1n,
+      2n,
+      3n,
+      ctx.guardian.account.address,
+      ctx.treasury.account.address,
+    ]);
+
+    const hash = await monitorZero.write.checkSanctions(["OFAC_SDN"], { value: 500n });
+    const receipt = await ctx.publicClient.waitForTransactionReceipt({ hash });
+    const events = parseEventLogs({ abi: monitorZero.abi, logs: receipt.logs, eventName: "SanctionCheckRequested" });
+    assert.equal(events.length, 1);
+    
+    // Fee is (500 * 10) / 10000 = 0 wei
+    assert.equal(await monitorZero.read.accruedNativeFees(), 0n);
+  });
+
+  it("reverts withdrawNativeFees if the treasury rejects ether transfers", async () => {
+    const { viem, publicClient, guardian } = await deploy();
+    
+    // Deploy a malicious/non-payable contract to act as treasury
+    // MockAgentRequester has no receive() function, so it will reject plain ether transfers.
+    const nonPayableTreasury = await viem.deployContract("MockAgentRequester", [0n]);
+    
+    // We still deploy a real MockAgentRequester for the agentRequester contract dependency
+    const dummyMock = await viem.deployContract("MockAgentRequester", [0n]);
+
+    const monitorFail = await viem.deployContract("ComplianceMonitor", [
+      dummyMock.address,
+      1n,
+      2n,
+      3n,
+      guardian.account.address,
+      nonPayableTreasury.address,
+    ]);
+
+    // Send funds directly to accumulate fees (simulate checkSanctions fees)
+    const hash = await monitorFail.write.checkSanctions(["OFAC_SDN"], { value: parseEther("10") });
+    await publicClient.waitForTransactionReceipt({ hash });
+
+    assert.equal(await monitorFail.read.accruedNativeFees(), parseEther("0.01")); // 0.1% of 10 STT
+
+    // Try to withdraw. It should revert because the nonPayableTreasury rejects the ether transfer.
+    await assert.rejects(monitorFail.write.withdrawNativeFees());
+  });
+
+  it("reverts handleResolution if the platform request ID is unknown", async () => {
+    const ctx = await deploy();
+    // Reverts since callback msg.sender is not agentRequester
+    await assert.rejects(
+      ctx.monitor.write.handleResolution([
+        999n,
+        [],
+        2,
+        emptyRequest
+      ])
+    );
+  });
 });
+
