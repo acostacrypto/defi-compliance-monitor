@@ -89,7 +89,7 @@ npm run compile
 npm run test
 ```
 
-Expected: 20 tests passing.
+Expected: 23 tests passing.
 
 ### 4. Deploy Contract
 
